@@ -20,7 +20,7 @@ npm start
 
 3. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-## Technologies Used
+## Tech Stack
 
 - React 18
 - Tailwind CSS (via CDN)
@@ -28,6 +28,16 @@ npm start
 - Reown AppKit (WalletConnect) for crypto wallet connection
 - QRCode library for generating QR codes
 - Mobile-first responsive design
+- Backend deployed at: https://github.com/RuthChisom/zephyr-backend
+- Backend uses Filecoin blockchain for storage, Lisk for wallet connection, smart contracts for access control
+- App deployed at: https://zephyrapp.netlify.app/
+
+## Built For — Hackathon Tracks
+
+| Track               | Integration Highlights                                                                 |
+|---------------------|----------------------------------------------------------------------------------------|
+| ✅ Privacy          | Empowering patients to manage their own medical data                                   |
+| ✅ Consumer apps    | Medical data is highly sensitive information, and this app handles it with the utmost confidentiality (encrypted). |
 
 ## Usage
 
