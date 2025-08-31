@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import QRCode from 'qrcode';
 import RecordDetail from './RecordDetail';
+import WalletConnect from './WalletConnect';
 
 function App() {
   const [activeTab, setActiveTab] = useState('Home');
@@ -13,6 +14,7 @@ function App() {
   });
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const [showWalletConnect, setShowWalletConnect] = useState(false);
   const canvasRef = useRef(null);
 
   // Generate QR code for sharing
@@ -61,6 +63,20 @@ function App() {
     setSelectedRecord(null);
   };
 
+  const handleWalletAction = () => {
+    setShowWalletConnect(true);
+  };
+
+  const handleFileUploaded = (uploadResult) => {
+    console.log('File uploaded successfully:', uploadResult);
+    // You can add logic here to update the medical records list
+    alert(`File uploaded successfully! Transaction: ${uploadResult.transactionHash.slice(0, 10)}...`);
+  };
+
+  const closeWalletConnect = () => {
+    setShowWalletConnect(false);
+  };
+
   const medicalRecords = [
     { 
       date: '12 AUG 2025', 
@@ -86,8 +102,8 @@ function App() {
   ];
 
   const quickActions = [
-    { label: 'Scan', icon: '📄', action: () => alert('Scan functionality would open camera') },
-    { label: 'Add', icon: '➕', action: () => alert('Add new record functionality') },
+    { label: 'Scan', icon: '📄', action: handleWalletAction },
+    { label: 'Add', icon: '➕', action: handleWalletAction },
     { label: 'Share', icon: '🔗', action: () => generateQR() },
   ];
 
@@ -123,7 +139,8 @@ function App() {
         <header className="px-5 pt-3 pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg font-semibold tracking-tight"><img src="zephyrlogo.png" alt="Logo" className="w-6 h-6" />Zephyr</h1>
+              <img src="zephyrlogo.png" alt="Logo" className="w-6 h-6" />
+              <h1 className="text-lg font-semibold tracking-tight">Zephyr</h1>
               <p className="text-[11px] text-slate-500">Where Health Meets Innovation</p>
             </div>
             <div className="flex items-center gap-2">
@@ -353,6 +370,14 @@ function App() {
             ))}
           </div>
         </nav>
+
+        {/* Wallet Connect Modal */}
+        {showWalletConnect && (
+          <WalletConnect 
+            onFileSelected={handleFileUploaded}
+            onClose={closeWalletConnect}
+          />
+        )}
       </div>
     </div>
   );
