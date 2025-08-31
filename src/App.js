@@ -15,6 +15,29 @@ function App() {
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [showWalletConnect, setShowWalletConnect] = useState(false);
+  const [medicalRecords, setMedicalRecords] = useState([
+    { 
+      date: '12 AUG 2025', 
+      title: 'Complete blood count', 
+      meta: 'PDF • 2 pages • Lab ABC', 
+      tag: 'Lab',
+      id: 1
+    },
+    { 
+      date: '03 AUG 2025', 
+      title: 'Appointment Dr. Lopez', 
+      meta: 'Diagnosis: allergic rhinitis', 
+      tag: 'Note',
+      id: 2
+    },
+    { 
+      date: '20 JUL 2025', 
+      title: 'Chest X-ray', 
+      meta: 'DICOM attached • HMG Hospital', 
+      tag: 'Imaging',
+      id: 3
+    },
+  ]);
   const canvasRef = useRef(null);
 
   // Generate QR code for sharing
@@ -69,37 +92,18 @@ function App() {
 
   const handleFileUploaded = (uploadResult) => {
     console.log('File uploaded successfully:', uploadResult);
-    // You can add logic here to update the medical records list
-    alert(`File uploaded successfully! Transaction: ${uploadResult.transactionHash.slice(0, 10)}...`);
+    
+    // Add new record to timeline
+    if (uploadResult.newRecord) {
+      setMedicalRecords(prev => [uploadResult.newRecord, ...prev]);
+    }
+    
+    alert(`File uploaded successfully! Record ID: ${uploadResult.backendResponse.recordId.slice(0, 8)}...`);
   };
 
   const closeWalletConnect = () => {
     setShowWalletConnect(false);
   };
-
-  const medicalRecords = [
-    { 
-      date: '12 AUG 2025', 
-      title: 'Complete blood count', 
-      meta: 'PDF • 2 pages • Lab ABC', 
-      tag: 'Lab',
-      id: 1
-    },
-    { 
-      date: '03 AUG 2025', 
-      title: 'Appointment Dr. Lopez', 
-      meta: 'Diagnosis: allergic rhinitis', 
-      tag: 'Note',
-      id: 2
-    },
-    { 
-      date: '20 JUL 2025', 
-      title: 'Chest X-ray', 
-      meta: 'DICOM attached • HMG Hospital', 
-      tag: 'Imaging',
-      id: 3
-    },
-  ];
 
   const quickActions = [
     { label: 'Scan', icon: '📄', action: handleWalletAction },

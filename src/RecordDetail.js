@@ -1,6 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
+import DoctorConsent from './DoctorConsent';
 
 function RecordDetail({ record, onBack }) {
+  const [showDoctorConsent, setShowDoctorConsent] = useState(false);
+
+  const handleShareWithDoctor = () => {
+    setShowDoctorConsent(true);
+  };
+
+  const handleConsentGranted = (consentData) => {
+    console.log('Consent granted:', consentData);
+    alert(`Access granted to ${consentData.doctor.name} for ${consentData.duration.label.toLowerCase()}`);
+  };
+
+  const closeDoctorConsent = () => {
+    setShowDoctorConsent(false);
+  };
+
   const getRecordContent = (record) => {
     switch (record.tag) {
       case 'Lab':
@@ -22,6 +38,38 @@ function RecordDetail({ record, onBack }) {
                 { label: 'Technician', value: 'Maria Rodriguez, MLT' },
                 { label: 'Ordered by', value: 'Dr. Lopez' },
                 { label: 'Collection Date', value: '12 AUG 2025, 08:30 AM' }
+              ]
+            }
+          ]
+        };
+      case 'Upload':
+        return {
+          sections: [
+            {
+              title: 'File Information',
+              content: [
+                { label: 'File Name', value: record.title },
+                { label: 'File Type', value: record.meta.includes('PDF') ? 'PDF Document' : 'Text Document' },
+                { label: 'File Size', value: record.meta.split('•')[1]?.trim() || 'Unknown' },
+                { label: 'Upload Date', value: record.date }
+              ]
+            },
+            {
+              title: 'Blockchain Information',
+              content: [
+                { label: 'Record ID', value: record.recordId || 'N/A' },
+                { label: 'Blockchain Hash', value: record.hash ? `${record.hash.slice(0, 10)}...${record.hash.slice(-6)}` : 'N/A' },
+                { label: 'Storage Path', value: 'Encrypted on IPFS' },
+                { label: 'Verification', value: 'Blockchain Verified', status: 'normal' }
+              ]
+            },
+            {
+              title: 'Security & Privacy',
+              content: [
+                { label: 'Encryption', value: 'AES-256 Encrypted', status: 'normal' },
+                { label: 'Access Control', value: 'Patient Only' },
+                { label: 'Backup Status', value: 'Distributed Storage', status: 'normal' },
+                { label: 'Audit Trail', value: 'Immutable Record' }
               ]
             }
           ]
@@ -129,6 +177,7 @@ function RecordDetail({ record, onBack }) {
             <span className={`text-[10px] px-2 py-0.5 rounded-full border text-center ${
               record.tag === 'Lab' ? 'bg-purple-50 border-purple-200 text-purple-700' :
               record.tag === 'Note' ? 'bg-blue-50 border-blue-200 text-blue-700' :
+              record.tag === 'Upload' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' :
               'bg-orange-50 border-orange-200 text-orange-700'
             }`}>
               {record.tag}
@@ -170,18 +219,40 @@ function RecordDetail({ record, onBack }) {
           <section className="rounded-2xl p-4 bg-emerald-50 border border-emerald-200">
             <h2 className="text-sm font-semibold mb-3">Actions</h2>
             <div className="grid grid-cols-2 gap-2">
-              <button className="rounded-xl py-3 bg-white border border-slate-200 hover:bg-slate-100 transition text-[11px] font-medium">
-                📄 Download PDF
-              </button>
-              <button className="rounded-xl py-3 bg-white border border-slate-200 hover:bg-slate-100 transition text-[11px] font-medium">
-                🔗 Share Record
-              </button>
-              <button className="rounded-xl py-3 bg-white border border-slate-200 hover:bg-slate-100 transition text-[11px] font-medium">
-                📧 Email Doctor
-              </button>
-              <button className="rounded-xl py-3 bg-white border border-slate-200 hover:bg-slate-100 transition text-[11px] font-medium">
-                📅 Schedule Follow-up
-              </button>
+              {record.tag === 'Upload' ? (
+                <>
+                  <button className="rounded-xl py-3 bg-white border border-slate-200 hover:bg-slate-100 transition text-[11px] font-medium">
+                    📄 View File
+                  </button>
+                  <button className="rounded-xl py-3 bg-white border border-slate-200 hover:bg-slate-100 transition text-[11px] font-medium">
+                    🔗 View on Blockchain
+                  </button>
+                  <button 
+                    onClick={handleShareWithDoctor}
+                    className="rounded-xl py-3 bg-white border border-slate-200 hover:bg-slate-100 transition text-[11px] font-medium"
+                  >
+                    📧 Share with Doctor
+                  </button>
+                  <button className="rounded-xl py-3 bg-white border border-slate-200 hover:bg-slate-100 transition text-[11px] font-medium">
+                    🗑️ Delete Record
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button className="rounded-xl py-3 bg-white border border-slate-200 hover:bg-slate-100 transition text-[11px] font-medium">
+                    📄 Download PDF
+                  </button>
+                  <button className="rounded-xl py-3 bg-white border border-slate-200 hover:bg-slate-100 transition text-[11px] font-medium">
+                    🔗 Share Record
+                  </button>
+                  <button className="rounded-xl py-3 bg-white border border-slate-200 hover:bg-slate-100 transition text-[11px] font-medium">
+                    📧 Email Doctor
+                  </button>
+                  <button className="rounded-xl py-3 bg-white border border-slate-200 hover:bg-slate-100 transition text-[11px] font-medium">
+                    📅 Schedule Follow-up
+                  </button>
+                </>
+              )}
             </div>
           </section>
 
@@ -200,6 +271,15 @@ function RecordDetail({ record, onBack }) {
 
         {/* Bottom safe area */}
         <div className="h-20" />
+
+        {/* Doctor Consent Modal */}
+        {showDoctorConsent && (
+          <DoctorConsent 
+            record={record}
+            onClose={closeDoctorConsent}
+            onConsentGranted={handleConsentGranted}
+          />
+        )}
       </div>
     </div>
   );
