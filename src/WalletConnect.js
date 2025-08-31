@@ -97,36 +97,68 @@ const WalletConnect = ({ onFileSelected, onClose }) => {
     }
   };
 
-  const simulateBackendUpload = async (file, walletAddress) => {
+  const readFileAsBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]); // Remove data:application/pdf;base64, prefix
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const uploadToBackend = async (file, walletAddress) => {
     setUploading(true);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Simulate backend processing
-    const mockResponse = {
-      success: true,
-      fileId: Math.random().toString(36).substring(2, 15),
-      fileName: file.name,
-      fileSize: file.size,
-      uploadedBy: walletAddress,
-      timestamp: new Date().toISOString(),
-      ipfsHash: `Qm${Math.random().toString(36).substring(2, 15)}`,
-      transactionHash: `0x${Math.random().toString(16).substring(2, 66)}`
-    };
-    
-    console.log('Mock Backend Response:', mockResponse);
-    setUploading(false);
-    setUploadComplete(true);
-    
-    return mockResponse;
+    try {
+      // Read file content as base64
+      const fileContent = await readFileAsBase64(file);
+      
+      // Prepare API payload
+      const payload = {
+        patient: walletAddress,
+        fileContent: fileContent
+      };
+
+      // Call real backend API
+      const response = await fetch('https://zephyr-backend-1-u74u.onrender.com/records', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      console.log('Backend Response:', result);
+      setUploading(false);
+      setUploadComplete(true);
+      
+      return {
+        success: true,
+        fileName: file.name,
+        fileSize: file.size,
+        uploadedBy: walletAddress,
+        timestamp: new Date().toISOString(),
+        backendResponse: result
+      };
+      
+    } catch (error) {
+      console.error('Backend upload error:', error);
+      setUploading(false);
+      throw new Error(`Upload failed: ${error.message}`);
+    }
   };
 
   const handleUpload = async () => {
     if (!selectedFile || !account) return;
     
     try {
-      const result = await simulateBackendUpload(selectedFile, account);
+      const result = await uploadToBackend(selectedFile, account);
       
       // Call parent callback if provided
       if (onFileSelected) {
@@ -140,7 +172,7 @@ const WalletConnect = ({ onFileSelected, onClose }) => {
       
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Upload failed. Please try again.');
+      alert(`Upload failed: ${error.message}`);
       setUploading(false);
     }
   };
