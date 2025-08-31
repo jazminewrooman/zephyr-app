@@ -36,8 +36,8 @@ npm start
 
 | Track               | Integration Highlights                                                                 |
 |---------------------|----------------------------------------------------------------------------------------|
-| ✅ Privacy          | Empowering patients to manage their own medical data                                   |
-| ✅ Consumer apps    | Medical data is highly sensitive information, and this app handles it with the utmost confidentiality (encrypted). |
+| ✅ Consumer apps          | Empowering patients to manage their own medical data                                   |
+| ✅ Privacy    | Medical data is highly sensitive information, and this app handles it with the utmost confidentiality (encrypted). |
 
 ## Usage
 
