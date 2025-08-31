@@ -1,14 +1,10 @@
 # Zephyr
 
-A mobile-first React application for managing personal medical records with secure sharing capabilities.
+A mobile-first React application for managing personal medical records with secure sharing capabilities. Created for the Aleph Hackathon, Aug 31, 2025.
 
 ## Features
 
-- **Emergency Card**: Quick access to critical medical information with QR code
-- **Medical Timeline**: Chronological view of medical records, appointments, and test results
-- **Secure Sharing**: Generate temporary QR codes and links to share specific medical data with healthcare providers
 - **Mobile-First Design**: Optimized for mobile devices with responsive design
-- **Interactive UI**: Real-time updates and interactive elements
 
 ## Getting Started
 
@@ -28,16 +24,10 @@ npm start
 
 - React 18
 - Tailwind CSS (via CDN)
+- ethers.js for wallet connection
+- Reown AppKit (WalletConnect) for crypto wallet connection
 - QRCode library for generating QR codes
 - Mobile-first responsive design
-
-## Key Components
-
-- **Emergency Card**: Toggle QR code display for emergency medical information
-- **Medical Timeline**: Interactive list of medical records with open functionality
-- **Share Controls**: Granular permission settings for sharing medical data
-- **QR Code Generation**: Dynamic QR codes with temporary access tokens
-- **Bottom Navigation**: Tab-based navigation system
 
 ## Usage
 
